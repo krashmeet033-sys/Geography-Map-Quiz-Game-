@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Map Quiz Game </title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Geography Map Quiz Game 🌍</div>
+        <nav>
+            <button onclick="showSection('home')" class="nav-btn active" id="btn-home">Home</button>
+            <button onclick="showSection('play')" class="nav-btn" id="btn-play">Play</button>
+            <button onclick="showSection('leaderboard')" class="nav-btn" id="btn-leaderboard">Leaderboard</button>
+            <button onclick="showSection('forum')" class="nav-btn" id="btn-forum">Forum</button>
+            <button onclick="showSection('pricing')" class="nav-btn" id="btn-pricing">Pricing</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="content-section active">
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <h1>Interactive Geography Learning</h1>
+                    <p>Test your knowledge of world geography with our interactive quiz!</p>
+                    <button class="start-btn" onclick="showSection('play')">Start Quiz</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Play Section -->
+        <section id="play" class="content-section">
+            <div class="play-container">
+                <h2>Play Quiz</h2>
+                    <div class="quiz-controls">
+                        <div class="quiz-options">
+                            <div class="option-group">
+                                <label>Difficulty:</label>
+                                <div class="difficulty-btns">
+                                    <button onclick="setDifficulty('easy')" class="diff-btn active" id="btn-easy">Easy</button>
+                                    <button onclick="setDifficulty('moderate')" class="diff-btn" id="btn-moderate">Moderate</button>
+                                    <button onclick="setDifficulty('hard')" class="diff-btn" id="btn-hard">Hard</button>
+                                </div>
+                            </div>
+                            <div class="option-group">
+                                <label for="quiz-type-select">Category:</label>
+                                <select id="quiz-type-select">
+                                    <option value="countries">Countries</option>
+                                    <option value="capitals">Capitals</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label for="continent-select">Continent:</label>
+                                <select id="continent-select" onchange="filterContinent()">
+                                    <option value="all">All Continents</option>
+                                    <option value="Africa">Africa</option>
+                                    <option value="Asia">Asia</option>
+                                    <option value="Europe">Europe</option>
+                                    <option value="North America">North America</option>
+                                    <option value="South America">South America
+                                    <option value="Oceania">Oceania</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="quiz-stats">
+                            <div class="stat-item">Level: <span id="current-level-display">Easy</span></div>
+                            <div class="stat-item">Score: <span id="score">0</span></div>
+                            <div class="stat-item">Timer: <span id="timer">20</span> s</div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="progress-bar" class="progress-bar"></div>
+                        </div>
+                        <div class="question-panel">
+                            <p id="question-text">Select your options and click Start!</p>
+                            <button id="start-game-btn" class="start-btn" onclick="startGame()">Start Game</button>
+                        </div>
+                    </div>
+                <div id="map"></div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="content-section">
+            <div class="leaderboard-container">
+                <h2>Leaderboard</h2>
+                <div class="leaderboard-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <!-- Leaderboard data will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart-container">
+                    <canvas id="leaderboard-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forum Section -->
+        <section id="forum" class="content-section">
+            <div class="forum-container">
+                <h2>Community Forum</h2>
+                <p>Share your geography tips or ask questions!</p>
+                <div class="forum-placeholder">
+                    <textarea placeholder="Ask a question or share a tip..."></textarea>
+                    <button class="post-btn">Post</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="content-section">
+            <div class="pricing-container">
+                <h2>Pricing Plans</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card free" onclick="selectPlan(this)">
+                        <h3>Free</h3>
+                        <p class="price">$0/mo</p>
+                        <ul>
+                            <li>Basic continent-level quizzes</li>
+                            <li>Local Leaderboard access</li>
+                            <li>Standard Timer settings</li>
+                            <li>Community Forum reading</li>
+                            <li>Ad-supported experience</li>
+                        </ul>
+                        <button class="plan-btn">Current</button>
+                    </div>
+                    <div class="pricing-card premium" onclick="selectPlan(this)">
+                        <h3>Premium</h3>
+                        <p class="price">$4.99/mo</p>
+                        <ul>
+                            <li>Advanced country & capital packs</li>
+                            <li>Exclusive Achievement badges</li>
+                            <li>Global Leaderboard competition</li>
+                            <li>Timed Challenge Mode</li>
+                            <li>Ad-free learning environment</li>
+                            <li>Priority Forum posting</li>
+                        </ul>
+                        <button class="plan-btn">Upgrade Now</button>
+                    </div>
+                    <div class="pricing-card pro" onclick="selectPlan(this)">
+                        <h3>Pro</h3>
+                        <p class="price">$9.99/mo</p>
+                        <ul>
+                            <li>All Premium features included</li>
+                            <li>Exclusive access to historical maps</li>
+                            <li>Detailed performance analytics</li>
+                            <li>Custom quiz creation tools</li>
+                            <li>Offline mode for mobile play</li>
+                            <li>24/7 Priority technical support</li>
+                        </ul>
+                        <button class="plan-btn">Go Pro</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="feedback-overlay" class="feedback-overlay hidden">
+        <div id="feedback-message"></div>
+    </div>
+
+    <div id="custom-alert-overlay" class="custom-alert-overlay hidden">
+        <div class="custom-alert-box">
+            <p id="custom-alert-message"></p>
+            <button onclick="closeCustomAlert()">OK</button>
+        </div>
+    </div>
+
+    <div id="game-over-overlay" class="custom-alert-overlay hidden">
+        <div class="custom-alert-box">
+            <h2>Game Finished! 🎉</h2>
+            <p>Your final score is: <strong id="final-score">0</strong></p>
+            <input type="text" id="player-name" placeholder="Enter your name">
+            <button onclick="saveFinalScore()">Save Score</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
